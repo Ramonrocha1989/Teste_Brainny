@@ -1,0 +1,32 @@
+{
+  "name": "teste_brainny",
+  "version": "1.0.0",
+  "description": "Teste para vaga de estágio da Brainny",
+  "main": "index.js",
+  "scripts": {
+    "start": "npx ts-node Main.ts"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Ramonrocha1989/Teste_Brainny.git"
+  },
+  "author": "Ramon Rocha",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Ramonrocha1989/Teste_Brainny/issues"
+  },
+  "homepage": "https://github.com/Ramonrocha1989/Teste_Brainny#readme",
+  "dependencies": {
+    "chance": "^1.1.8",
+    "ejs": "^3.1.8",
+    "faker": "^5.5.3",
+    "prompt-sync": "^4.2.0"
+  },
+  "devDependencies": {
+    "@faker-js/faker": "^7.3.0",
+    "@types/node": "^18.6.4",
+    "@types/prompt-sync": "^4.2.0",
+    "fs": "^0.0.1-security",
+    "typescript": "^4.8.4"
+  }
+}
