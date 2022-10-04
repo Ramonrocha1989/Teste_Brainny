@@ -3,7 +3,7 @@ import fs from 'fs';
 import { Client } from './ClassClient'
 
 const data = fs.readFileSync('./data.json', 'utf-8');
-const list: [] = JSON.parse(data);
+const list: Client[] = JSON.parse(data);
 
 let tec = prompt();
 let option = -1;
@@ -19,6 +19,12 @@ while (option != 0) {
     console.log('| 5. Nomes dos clientes                                          |');
     console.log('| 6. Primeiro nome dos clientes                                  |');
     console.log('| 7. Digite a letra para saber o primeiro nome dos clientes      |');
+    console.log('| 8. Clientes maiores de 18 anos                                 |');
+    console.log('| 9. Procura pelo nome                                           |');
+    console.log('| 10. Total de vendas em R$                                      |');
+    console.log('| 11. Clientes que não compram a mais de 1 ano                   |');
+    console.log('| 12. Clientes com mais de 15 compras                            |');
+    console.log('| 13. Adiciona cliente                                           |');
     console.log('| 0. Sair                                                        |');
     console.log('|________________________________________________________________|');
 
@@ -49,6 +55,32 @@ while (option != 0) {
             const letterFirstName = tec('Digite a letra para saber o primeiro nome: ');
             returnFirstNameCaracter(letterFirstName)
             break;
+        case 8:
+            searchAdultUser()
+            break
+        case 9:
+            const nameList = tec('Digite o nome que deseja procurar: ');
+            nameInTheList(nameList)
+            break
+        case 10:
+            salesAmount()
+            break
+        case 11:
+            searchClient()
+            break
+        case 12:
+            clientsMorePurchase();
+            break
+        case 13:
+            const name = tec('Digite o nome: ');
+            const data = tec('Digite de nascimento no formato yyyy-mm-dd: ');
+            const gender = tec('Digite o gênero: ');
+            const datalastpurchase = tec('Digite a data da ultima compra no formato yyyy-mm-dd: ');
+            const countpurchase = tec('Digite quantidade de compra: ');
+            inserir(name, data, gender, datalastpurchase, countpurchase)
+            break
+        default:
+            break
     }
 
 
@@ -82,7 +114,7 @@ function search(caracter: string) {
         }
         return counter
     }, {})
-    console.log(counterNomes);
+    console.log(`Total de Registros  é ${counterNomes}`);
 }
 
 function returnName() {
@@ -105,3 +137,100 @@ function returnFirstNameCaracter(caracter: string) {
         }
     })
 }
+
+function searchAdultUser() {
+    return list.filter((client: Client) => {
+        const birthDate = new Date(client.birthDate).getTime();
+        const today = new Date().getTime();
+        const milissegundos = today - birthDate;
+        const seconds = milissegundos / 1000;
+        const minutes = seconds / 60;
+        const hours = minutes / 60;
+        const days = hours / 24;
+        const months = days / 30;
+        const years = months / 12;
+
+        if (years >= 18) {
+            console.log(`Cliente: ${client.name} tem ${Math.trunc(years)} anos de idade`)
+        }
+    })
+}
+
+function nameInTheList(caracter: string) {
+    var message = '';
+    const names = list.reduce((previousValue, client: Client) => {
+        const search = caracter.replace(new RegExp("/" + caracter + "/"), 'replacement')
+        const firstName = client.name.split(" ");
+        if (firstName[0].match(search)) {
+            message = `${caracter} está na lista`;
+        }
+        return message;
+    }, {})
+    if (names) {
+        console.log(names);
+    } else {
+        console.log(`${caracter} não esta na lista`)
+    }
+}
+
+function salesAmount(): ReturnType<any> {
+    const totalValue = JSON.parse(data)?.reduce(
+        (sum: number, e: any) => sum + parseInt(e?.lastPurchase),
+        0,
+    )
+    console.log(`Total de vendas: R$${totalValue.toLocaleString('pt-br', { minimumFractionDigits: 2 })}`);
+}
+
+function calculatelastPurchaseDate(lastPurchaseDateCliente: Date) {
+    const data = new Date(lastPurchaseDateCliente);
+    const todayDate = new Date();
+    const todayYear = todayDate.getFullYear();
+    const birthdayThisYear = new Date(data.getDay(), data.getMonth(), todayYear);
+    var lastPurchaseDate = todayYear - data.getFullYear();
+
+    if (birthdayThisYear > todayDate) {
+        lastPurchaseDate--;
+    }
+
+    return lastPurchaseDate;
+}
+
+function searchClient() {
+    list.filter((client: Client) => {
+        const convertedDate = calculatelastPurchaseDate(client.lastPurchaseDate)
+        if (convertedDate > 1) {
+            console.log(`Cliente: ${client.name} está ${convertedDate} anos sem comprar`)
+        }
+    })
+}
+
+function clientsMorePurchase() {
+    list.filter((client: Client) => {
+        if ((client.lastPurchase) > 15) {
+            console.log(`Cliente: ${client.name} ja realizou ${client.lastPurchase} compras`)
+        }
+    })
+}
+
+
+function inserir(name: string, birthDate: string, gender: string, lastPurchaseDate: string, countPurchase: string) {
+    const client: Client = {
+        name: name,
+        birthDate: new Date(birthDate),
+        gender: gender,
+        lastPurchaseDate: new Date(lastPurchaseDate),
+        countPurchase: countPurchase,
+        lastPurchase: 1
+    };
+    list.unshift(client);
+    console.log(`${client.name} foi adicionado a lista`)  
+    console.log(list);
+    
+    
+}
+
+
+
+
+
+
